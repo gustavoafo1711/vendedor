@@ -2,7 +2,6 @@ package com.example.vendedor.rest.controller;
 
 import static org.springframework.http.HttpStatus.*;
 
-
 import java.util.List;
 
 import org.springframework.data.domain.Example;
@@ -44,6 +43,7 @@ public class LojaController {
 	}
 	
 	@GetMapping
+	@ResponseStatus(NO_CONTENT)
 	public List<Loja> buscarTodos(Loja filtroLoja){
 		ExampleMatcher matcher = ExampleMatcher.matching()
 				.withIgnoreCase()
@@ -53,20 +53,26 @@ public class LojaController {
 	}
 	
 	@DeleteMapping("{id}")
+	@ResponseStatus(NO_CONTENT)
 	public void deletar(@PathVariable Integer id) {
-		lojasRepository.findById(id).map(lojaExistente -> {
-			lojasRepository.delete(lojaExistente);
+		lojasRepository.findById(id).map(lojaExistens -> {
+			lojasRepository.delete(lojaExistens);
 			return Void.TYPE;
-		}).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Não foi encontrado nenhuma loja no sistema."));
+		}).orElseThrow(() -> 
+		new ResponseStatusException(NOT_FOUND, "Não foi encontrado nenhuma loja no sistema."));
+		
 	}
 	
 	@PutMapping("{id}")
-	public void atualizar(@PathVariable Integer id, @RequestBody Loja loja) {
+	@ResponseStatus(NO_CONTENT)
+	public void atualizar(@PathVariable Integer id, @RequestBody @Valid Loja loja) {
 		lojasRepository.findById(id).map(lojaExistente -> {
 			loja.setId(lojaExistente.getId());
+			loja.setDataCadastro(lojaExistente.getDataCadastro());
 			lojasRepository.save(loja);
-			return lojaExistente;
-		}).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Não foi encontrado nenhuma loja no sistema."));
+			return Void.TYPE;
+		}).orElseThrow(() -> 
+		new ResponseStatusException(NOT_FOUND, "Não foi encontrado nenhuma loja no sistema."));
 	}
 
 }

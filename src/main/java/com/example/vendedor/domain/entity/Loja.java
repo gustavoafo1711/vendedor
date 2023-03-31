@@ -2,7 +2,10 @@ package com.example.vendedor.domain.entity;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CNPJ;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,15 +28,17 @@ public class Loja {
 	@Column(name = "id_loja")
 	private Integer Id;
 	
-	@NotBlank
+	@NotBlank(message = "Campo Nome da Loja é obrigatório.")
 	@Column(name = "nome_loja", length = 100)
 	private String nomeLoja;
 	
-	@NotBlank
+	@NotBlank(message = "Campo CNPJ é obrigatório.")
 	@Column(name = "cnpj", length =14)
+	@CNPJ(message = "Informe um CNPJ válido.")
 	private String cnpj;
 	
 	@Column(name = "data_cadastro")
+	@JsonIgnore(value = true)
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCadastro;
 
